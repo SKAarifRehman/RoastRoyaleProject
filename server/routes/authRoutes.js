@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+// const authMiddleware = require("../middleware/auth");
 const {
   registerUser,
   loginUser,
@@ -11,8 +12,8 @@ const {
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-
-router.get("/profile", authMiddleware, async (req, res) => {
+// Profile routes
+const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
@@ -20,9 +21,10 @@ router.get("/profile", authMiddleware, async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
-});
+};
 
-
+// router.get("/profile", authMiddleware, getProfile);
+// router.get("/me", authMiddleware, getProfile);
 
 // Google OAuth (Firebase token-based)
 router.post("/google", googleLogin);
